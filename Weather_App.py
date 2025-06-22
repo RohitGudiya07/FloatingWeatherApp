@@ -1,5 +1,54 @@
 from tkinter import *
 import requests
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+# GUI setup
+app = Tk()
+app.title("Weather App")
+app.geometry("350x220")
+app.configure(bg="#87ceeb")
+
+# Function to get weather
+def get_weather():
+    city = city_entry.get().strip().title()
+    api_key = os.getenv("OPENWEATHER_API_KEY")
+    
+    if not api_key:
+        result_label.config(text="API Key not found!", fg="red")
+        return
+
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+        weather = data["weather"][0]["description"]
+        temp = data["main"]["temp"]
+        result_label.config(text=f"Weather: {weather}\nTemperature: {temp}°C", fg="black")
+    else:
+        result_label.config(text="City not found!", fg="red")
+
+# GUI components
+Label(app, text="Simple Weather App", font=("Helvetica", 16, "bold"), bg="#87ceeb").pack(pady=10)
+
+city_entry = Entry(app, font=("Helvetica", 14), justify='center')
+city_entry.pack(pady=8)
+city_entry.focus()
+
+Button(app, text="Get Weather", font=("Helvetica", 12, "bold"), bg="#007acc", fg="white", command=get_weather).pack(pady=10)
+
+result_label = Label(app, text="", font=("Helvetica", 14), bg="#87ceeb")
+result_label.pack(pady=10)
+
+app.mainloop()
+
+
+'''from tkinter import *
+import requests
 
 def get_weather():
     city = city_entry.get().strip().title()
@@ -35,7 +84,7 @@ result_label = Label(app, text="", font=("Helvetica", 14), bg="#87ceeb")
 result_label.pack(pady=10)
 
 app.mainloop()
-
+'''
 
 
 """import requests
